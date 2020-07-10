@@ -1,0 +1,10 @@
+@import "~src/sass/variables";
+@import "~src/sass/mixins";
+
+div {
+  background: $main_color;
+  color: red;
+}
+a {
+  @include btn-generator(red);
+}
