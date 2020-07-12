@@ -15,6 +15,8 @@ export class FilmsService {
 
   urlPopularFilms: string = 'https://api.themoviedb.org/3/movie/popular'; //url to popular fims
   urlGenres: string = 'https://api.themoviedb.org/3/genre/movie/list';
+  urlFilm: string = 'https://api.themoviedb.org/3/movie/';
+  urlSearchFilm: string = 'https://api.themoviedb.org/3/search/movie';
 
   constructor(private http: HttpClient) {}
 
@@ -33,6 +35,25 @@ export class FilmsService {
       params: new HttpParams()
         .set('api_key', this.req_params['api_key'])
         .set('language', this.req_params['lang']),
+    });
+  }
+
+  getFilm(id: string) {
+    return this.http.get(this.urlFilm + `${id}`, {
+      params: new HttpParams()
+        .set('api_key', this.req_params['api_key'])
+        .set('language', this.req_params['lang']),
+    });
+  }
+
+  searchFilms(title: string, numOfPage?: number) {
+    console.log(title);
+    return this.http.get(this.urlSearchFilm, {
+      params: new HttpParams()
+        .set('api_key', this.req_params['api_key'])
+        .set('language', this.req_params['lang'])
+        .set('query', title)
+        .set('page', `${numOfPage}`),
     });
   }
 }

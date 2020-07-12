@@ -10,59 +10,46 @@ export class FilmsDataSource implements DataSource<Film> {
 
   length = this.filmsCountSubject.asObservable();
 
-  private loadingSubject = new BehaviorSubject<boolean>(false);
-
-  public loading$ = this.loadingSubject.asObservable();
-
   constructor(private filmsService: FilmsService) {}
+
+  addGenresToFilmsArr(films: Film[], genres) {
+    genres['genres'].forEach((genre) => {
+      films.forEach((film, j) => {
+        if (
+          film['genre_ids'].forEach((id, index) => {
+            if (id === genre['id']) {
+              // remove id that was changed
+              // film['genre_ids'].splice(index, 1);
+
+              // console.log(id, genre['id'], genre['name']);
+              if (film.genre_names) {
+                film.genre_names = film.genre_names + ',' + genre['name'];
+              } else {
+                film.genre_names = genre['name'];
+              }
+            }
+          })
+        ) {
+        }
+      });
+    });
+  }
 
   loadFilms(numOfPage: number, firstIndex: number, secondIndex: number) {
     //one page contains 20 films, (secondIndex-firstIndex):number of films to show now
-    this.loadingSubject.next(true);
 
     this.filmsService
       .getPageOfFilms(numOfPage) //make req to api with filmsService
-      .pipe(
-        catchError(() => of([])),
-        finalize(() => this.loadingSubject.next(false))
-      ) //server returns Observable with array of films
+      //server returns Observable with array of films
       .subscribe((page_of_films) => {
         let films_from_server = page_of_films['results'].slice(
           firstIndex,
           secondIndex
         );
-
         // get list of genres
         this.filmsService.getGenres().subscribe((listOfGenres) => {
-          console.log(listOfGenres);
-
-          listOfGenres['genres'].forEach((genre) => {
-            films_from_server.forEach((film, j) => {
-              if (
-                film['genre_ids'].forEach((id, index) => {
-                  if (id === genre['id']) {
-                    // remove id that was changed
-                    film['genre_ids'].splice(index, 1);
-
-                    // console.log(id, genre['id'], genre['name']);
-                    if (film.genre_names) {
-                      film.genre_names = film.genre_names + ',' + genre['name'];
-                    } else {
-                      film.genre_names = genre['name'];
-                    }
-                  }
-                })
-              ) {
-              }
-            });
-          });
-          console.log(films_from_server);
-
-          this.filmsSubject.next(
-            // change array of genres-numbers to genres-strings
-
-            films_from_server
-          ); //we throw this to behavior subject
+          this.addGenresToFilmsArr(films_from_server, listOfGenres);
+          this.filmsSubject.next(films_from_server);
         });
       });
   }
@@ -73,53 +60,62 @@ export class FilmsDataSource implements DataSource<Film> {
     secondIndex: number
   ) {
     //one page contains 20 films, (secondIndex-firstIndex):number of films to show now
-    this.loadingSubject.next(true);
 
     this.filmsService
       .getPageOfFilms(numOfPage) //make req to api with filmsService
-      .pipe(
-        catchError(() => of([])),
-        finalize(() => this.loadingSubject.next(false))
-      ) //server returns Observable with array of films
+      //server returns Observable with array of films
       .subscribe((page_of_films) => {
         let films_from_server = page_of_films['results'].slice(
           firstIndex,
           secondIndex
         );
-
         // get list of genres
         this.filmsService.getGenres().subscribe((listOfGenres) => {
-          console.log(listOfGenres);
-
-          listOfGenres['genres'].forEach((genre) => {
-            films_from_server.forEach((film, j) => {
-              if (
-                film['genre_ids'].forEach((id, index) => {
-                  if (id === genre['id']) {
-                    // remove id that was changed
-                    film['genre_ids'].splice(index, 1);
-
-                    // console.log(id, genre['id'], genre['name']);
-                    if (film.genre_names) {
-                      film.genre_names = film.genre_names + ',' + genre['name'];
-                    } else {
-                      film.genre_names = genre['name'];
-                    }
-                  }
-                })
-              ) {
-              }
-            });
-          });
-          console.log(films_from_server);
-
-          this.filmsSubject.next(
-            // change array of genres-numbers to genres-strings
-
-            films_from_server
-          ); //we throw this to behavior subject
+          this.addGenresToFilmsArr(films_from_server, listOfGenres);
+          this.filmsSubject.next(films_from_server); //we throw this to behavior subject
         });
         this.filmsCountSubject.next(page_of_films['total_results']);
+      });
+  }
+
+  searchFilmsAndTheirCount(
+    title: string,
+    firstIndex: number,
+    secondIndex: number
+  ) {
+    this.filmsService.searchFilms(title).subscribe((page_of_films) => {
+      let films_from_server = page_of_films['results'].slice(
+        firstIndex,
+        secondIndex
+      );
+      // get list of genres
+      this.filmsService.getGenres().subscribe((listOfGenres) => {
+        this.addGenresToFilmsArr(films_from_server, listOfGenres);
+        this.filmsSubject.next(films_from_server); //we throw this to behavior subject
+        console.log(films_from_server);
+      });
+      this.filmsCountSubject.next(page_of_films['total_results']);
+    });
+  }
+  searchFilms(
+    title: string,
+    numOfPage: number,
+    firstIndex: number,
+    secondIndex: number
+  ) {
+    this.filmsService
+      .searchFilms(title, numOfPage)
+      .subscribe((page_of_films) => {
+        let films_from_server = page_of_films['results'].slice(
+          firstIndex,
+          secondIndex
+        );
+        // get list of genres
+        this.filmsService.getGenres().subscribe((listOfGenres) => {
+          this.addGenresToFilmsArr(films_from_server, listOfGenres);
+          this.filmsSubject.next(films_from_server); //we throw this to behavior subject
+          console.log(films_from_server);
+        });
       });
   }
   // abstract method of DataSource<Film> connect table and data source once
@@ -130,6 +126,5 @@ export class FilmsDataSource implements DataSource<Film> {
   //abstract method of DataSource<Film>, disconnect table and data source once
   disconnect(collectionViewer: CollectionViewer): void {
     this.filmsSubject.complete();
-    this.loadingSubject.complete();
   }
 }

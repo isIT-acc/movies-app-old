@@ -1,3 +1,7 @@
-table {
+@import "~src/sass/variables";
+@import "~src/sass/mixins";
+@import "~src/sass/utilities";
+
+mat-table {
   width: 100%;
 }

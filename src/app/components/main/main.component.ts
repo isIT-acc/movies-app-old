@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { FilmsService } from '../../services/films.service';
 import { FilmsDataSource } from '../../services/films.datasource';
@@ -10,15 +9,17 @@ import { FilmsDataSource } from '../../services/films.datasource';
   styleUrls: ['./main.component.scss'],
 })
 export class MainComponent implements OnInit {
+  searchString: string = '';
+
   paginatorOptions = {
     length: 1000,
     pageSize: 20,
-    pageSizeOptions: [5, 7, 10, 20],
+    pageSizeOptions: [5, 10, 20],
   };
 
   dataSource: FilmsDataSource;
 
-  displayedColumns: string[] = ['original_title', 'genre_names'];
+  displayedColumns: string[] = ['title', 'genre_names'];
 
   constructor(private filmsService: FilmsService) {}
 
@@ -32,20 +33,63 @@ export class MainComponent implements OnInit {
     });
     this.dataSource.loadFilmsAndTheirCount(1, 0, 20);
   }
-
+  // down logic work correctly only if pageSize<=20 and pageSize is divider of 20 without rest
+  getNumOfPage(paginatorEvt: any) {
+    return (
+      Math.trunc((paginatorEvt.pageIndex * paginatorEvt.pageSize) / 20) + 1
+    );
+  }
+  // down logic work correctly only if pageSize<=20 and pageSize is divider of 20 without rest
+  getFirstIndex(paginatorEvt: any) {
+    return (paginatorEvt.pageIndex * paginatorEvt.pageSize) % 20;
+  }
+  // down logic work correctly only if pageSize<=20 and pageSize is divider of 20 without rest
+  getSecondIndex(paginatorEvt: any) {
+    return (
+      ((paginatorEvt.pageIndex * paginatorEvt.pageSize) % 20) +
+      paginatorEvt.pageSize
+    );
+  }
+  ////
   ngAfterViewInit() {
     this.paginator.page.subscribe((evt) => {
-      console.log(evt);
-
-      // down logic work correctly only if pageSize<=20 and pageSize is divider of 20 without rest
-      if (evt.pageSize <= 20) {
+      //case for stream without search
+      if (this.searchString === '')
         this.dataSource.loadFilms(
-          Math.trunc((evt.pageIndex * evt.pageSize) / 20) + 1,
-          (evt.pageIndex * evt.pageSize) % 20,
-          ((evt.pageIndex * evt.pageSize) % 20) + evt.pageSize
+          this.getNumOfPage(evt),
+          this.getFirstIndex(evt),
+          this.getSecondIndex(evt)
+        );
+      else {
+        this.dataSource.searchFilms(
+          this.changeSpacesToPluses(),
+          this.getNumOfPage(evt),
+          this.getFirstIndex(evt),
+          this.getSecondIndex(evt)
         );
       }
     });
+  }
+  changeSpacesToPluses(): string {
+    return this.searchString.replace(/\s/g, '+');
+  }
+  onKey(evt) {
+    //when search first time show first page always
+    this.paginator.pageIndex = 0;
+    this.dataSource.searchFilmsAndTheirCount(
+      this.changeSpacesToPluses(),
+      0,
+      this.paginatorOptions.pageSize
+    );
+  }
+
+  onCloseSearchButton() {
+    this.searchString = '';
+    this.dataSource.loadFilmsAndTheirCount(
+      1,
+      0,
+      this.paginatorOptions.pageSize
+    );
   }
 
   // onRowClicked(row) {

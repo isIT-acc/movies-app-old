@@ -1,4 +1,4 @@
 export interface Film {
-  original_title: string;
+  title: string;
   genre_names: string;
 }

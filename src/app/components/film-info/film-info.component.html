@@ -1,0 +1,47 @@
+<div class="film_info">
+  <div class="container">
+    <div
+      class="film_info_showcase_container"
+      [ngStyle]="{
+        background: 'url(' + bg_img_url + ') no-repeat center center/cover'
+      }"
+    >
+      <div class="film_info_showcase">
+        <div class="film_info_first_col">
+          <img src="{{ img_url }}" alt="poster is absent" />
+          <button (click)="onClick($event)" mat-raised-button color="white">
+            {{ btn_state.text }}<mat-icon>{{ btn_state.icon_name }}</mat-icon>
+          </button>
+        </div>
+        <div class="film_info_sec_col">
+          <h2>{{ full_film?.title }}</h2>
+          <p>{{ full_film?.tagline }}</p>
+          <h3>About film:</h3>
+          <div>Genre: {{ genres }}</div>
+          <div>Language: {{ full_film?.original_language }}</div>
+          <div>Runtime: {{ full_film?.runtime }}</div>
+          <div>Budget: {{ full_film?.budget | currency: "USD" }}</div>
+          <div>Countries: {{ full_film?.production_countries }}</div>
+          <div>Release date: {{ full_film?.release_date | date }}</div>
+          <div>Status: {{ full_film?.status }}</div>
+        </div>
+        <div class="film_info_third_col">
+          <div class="rating">
+            <div class="digit_rating">
+              <span class="ratio">
+                <span class="vote_average">{{ full_film?.vote_average }}</span
+                >/10
+              </span>
+              <span class="vote_count">{{ full_film?.vote_count }}</span>
+            </div>
+            <!-- <div class="rating_string_container"> -->
+            <div class="rating_string">
+              <span style="width: {{ full_film?.vote_average * 10 }}%;"></span>
+              <!-- </div> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
