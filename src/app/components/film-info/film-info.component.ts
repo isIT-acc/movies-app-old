@@ -27,11 +27,31 @@ export class FilmInfoComponent implements OnInit {
 
   ngOnInit(): void {
     this.cur_id = this.route.snapshot.params['id'];
-    this.filmsService.getFilm(this.cur_id).subscribe((film) => {
-      this.film_info = new FilmInfo(film);
-    });
+    this.filmsService
+      .getFilmWithAppendParam(this.cur_id, 'recommendations,similar')
+      .subscribe((film) => {
+        console.log(film);
+        this.film_info = new FilmInfo(film);
+        //get random page of recommendation films for current film
+        this.addRandomFilmToStorage(7);
+      });
   }
 
+  addRandomFilmToStorage(times: number) {
+    if (times === 0) return;
+    this.filmsService
+      .getFilmRecs(
+        this.cur_id,
+        this.getRandomPage(this.film_info.getRecomsPagesCount())
+      )
+      .subscribe((obj) => {
+        //get random film from recommendations page and set its values to FilmInfo object
+        this.film_info.addObjToRecoms(
+          obj['results'][this.getRandomFilmForArr(obj['results'].length)]
+        );
+        this.addRandomFilmToStorage(--times);
+      });
+  }
   changeBtnState() {
     if (this.btn_state.filmInFavList) {
       this.btn_state.filmInFavList = false;
@@ -42,6 +62,21 @@ export class FilmInfoComponent implements OnInit {
       this.btn_state.text = 'Remove film'; //remove film
       this.btn_state.icon_name = 'remove'; //or remove
     }
+  }
+  // getRandomFilm from 1 to num of films
+  getRandomFilm(filmsNum: number): number {
+    return Math.floor(Math.random() * filmsNum) + 1;
+  }
+  // getRandomFilm from 0 to num of films-1(return value is index of Array)
+  getRandomFilmForArr(filmsNum: number): number {
+    return Math.floor(Math.random() * filmsNum);
+  }
+  //from 1 to num of pages
+  getRandomPage(pagesNum: number): number {
+    return Math.floor(Math.random() * pagesNum) + 1;
+  }
+  getPageForFilm(filmNum: number) {
+    return Math.floor(filmNum / 20) + 1;
   }
   onClick(evt) {
     this.changeBtnState();

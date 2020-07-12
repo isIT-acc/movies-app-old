@@ -38,16 +38,33 @@ export class FilmsService {
     });
   }
 
-  getFilm(id: string) {
+  getFilmWithAppendParam(id: string, append_to_response?: string) {
     return this.http.get(this.urlFilm + `${id}`, {
       params: new HttpParams()
         .set('api_key', this.req_params['api_key'])
-        .set('language', this.req_params['lang']),
+        .set('language', this.req_params['lang'])
+        .set('append_to_response', append_to_response),
+    });
+  }
+  getFilmRecs(id: string, pageNum: number) {
+    console.log('hello world');
+    return this.http.get(this.urlFilm + `${id}` + '/recommendations', {
+      params: new HttpParams()
+        .set('api_key', this.req_params['api_key'])
+        .set('language', this.req_params['lang'])
+        .set('page', `${pageNum}`),
+    });
+  }
+  getFilmSimilars(id: string, pageNum: number) {
+    return this.http.get(this.urlFilm + `${id}` + '/similar', {
+      params: new HttpParams()
+        .set('api_key', this.req_params['api_key'])
+        .set('language', this.req_params['lang'])
+        .set('page', `${pageNum}`),
     });
   }
 
   searchFilms(title: string, numOfPage?: number) {
-    console.log(title);
     return this.http.get(this.urlSearchFilm, {
       params: new HttpParams()
         .set('api_key', this.req_params['api_key'])

@@ -1,4 +1,5 @@
 import { FullFilm } from '../model/FullFilm';
+import { RecFilm } from '../model/RecFilm';
 export class FilmInfo implements FullFilm {
   title: string;
   tagline: string;
@@ -13,6 +14,12 @@ export class FilmInfo implements FullFilm {
   img_url: string;
   production_companies: Array<string>;
   production_countries: string;
+  overview: string;
+  recommendations: Array<RecFilm>;
+  recoms_count: number;
+  similars_count: number;
+  recoms_pages_count: number;
+  similar_pages_count: number;
 
   bg_img_url: string;
   constructor(jsonObj?: Object) {
@@ -32,6 +39,13 @@ export class FilmInfo implements FullFilm {
       this.img_url = 'https://image.tmdb.org/t/p/w300' + jsonObj['poster_path'];
       this.bg_img_url =
         'https://image.tmdb.org/t/p/w1280' + jsonObj['backdrop_path'];
+      this.overview = jsonObj['overview'];
+      this.recoms_count = jsonObj['recommendations']['total_results'];
+      this.similars_count = jsonObj['similar']['total_results'];
+      this.recoms_pages_count = jsonObj['recommendations']['total_pages'];
+      this.similar_pages_count = jsonObj['similar']['total_pages'];
+
+      this.recommendations = new Array(0);
     } else {
       this.runtime = '';
       this.original_language = '';
@@ -47,6 +61,12 @@ export class FilmInfo implements FullFilm {
       this.production_countries = '';
       this.img_url = 'https://image.tmdb.org/t/p/w300';
       this.bg_img_url = 'https://image.tmdb.org/t/p/w1280';
+      this.overview = '';
+      this.recoms_count = 0;
+      this.similars_count = 0;
+      this.recoms_pages_count = 0;
+      this.similar_pages_count = 0;
+      this.recommendations = new Array(0);
     }
   }
 
@@ -81,5 +101,42 @@ export class FilmInfo implements FullFilm {
           this.production_countries + ', ' + country['iso_3166_1'];
       }
     });
+  }
+
+  getRecomsCount() {
+    return this.recoms_count;
+  }
+  getSimilarsCount() {
+    return this.similars_count;
+  }
+  getSimilarPagesCount() {
+    return this.similar_pages_count;
+  }
+  getRecomsPagesCount() {
+    return this.recoms_pages_count;
+  }
+
+  addObjToRecoms(obj: Object): boolean {
+    // to remove same recoms
+
+    for (let i = 0; i < this.recommendations.length; i++) {
+      if (this.recommendations[i]) {
+        if (this.recommendations[i].id === obj['id']) {
+          console.log('inside the if');
+          return true;
+        }
+      }
+    }
+    console.log('outside the if');
+    let recomFilm: RecFilm = {
+      id: obj['id'],
+      title: obj['title'],
+      poster_path: 'https://image.tmdb.org/t/p/w92' + obj['poster_path'],
+    };
+
+    let l_1 = this.recommendations.length;
+    let l_2 = this.recommendations.push(recomFilm);
+    if (l_2 > l_1) return true;
+    else return false;
   }
 }

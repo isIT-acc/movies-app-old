@@ -30,6 +30,8 @@
       align-self: center;
       margin-top: 1rem;
     }
+
+    border-bottom: 2px solid orange;
   }
 
   &_first_col {
@@ -58,6 +60,19 @@
     }
     .vote_count {
       font-size: 0.8rem;
+    }
+  }
+
+  &_rec_list {
+    &_cont {
+      display: flex;
+      justify-content: flex-start;
+
+      .rec_film {
+        width: 92px;
+        text-align: center;
+        margin-right: 1rem;
+      }
     }
   }
 }
