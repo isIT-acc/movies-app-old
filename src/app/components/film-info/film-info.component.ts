@@ -11,8 +11,6 @@ import { FilmInfo } from '../../classes/film-info';
 export class FilmInfoComponent implements OnInit {
   film_info: FilmInfo;
   cur_id: string;
-  img_url: string = 'https://image.tmdb.org/t/p/w300';
-  bg_img_url: string = 'https://image.tmdb.org/t/p/w1280';
 
   btn_state: any = {
     filmInFavList: false,
@@ -20,31 +18,20 @@ export class FilmInfoComponent implements OnInit {
     icon_name: 'add', //or remove
   };
 
-  full_film: FullFilm;
-  genres: string = '';
-  // rating_string:
-
   constructor(
     private filmsService: FilmsService,
-    private route: ActivatedRoute // route: ActivatedRoute // private route: ActivatedRoute
-  ) {}
+    private route: ActivatedRoute
+  ) {
+    this.film_info = new FilmInfo();
+  }
 
   ngOnInit(): void {
     this.cur_id = this.route.snapshot.params['id'];
     this.filmsService.getFilm(this.cur_id).subscribe((film) => {
-      this.img_url += film['poster_path'];
-      this.setStrOfGenres(film['genres']);
-      this.bg_img_url += film['backdrop_path'];
+      this.film_info = new FilmInfo(film);
+    });
+  }
 
-      this.full_film = film as FullFilm;
-    });
-  }
-  setStrOfGenres(arr: Object[]) {
-    arr.forEach((genre) => {
-      if (this.genres == '') this.genres = genre['name'];
-      else this.genres = this.genres + ', ' + genre['name'];
-    });
-  }
   changeBtnState() {
     if (this.btn_state.filmInFavList) {
       this.btn_state.filmInFavList = false;
