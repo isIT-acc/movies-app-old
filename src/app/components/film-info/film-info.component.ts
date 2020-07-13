@@ -4,6 +4,8 @@ import { ActivatedRoute, Router } from '@angular/Router';
 import { FullFilm } from '../../model/FullFilm';
 import { FilmInfo } from '../../classes/film-info';
 import { Location } from '@angular/common';
+import { LocalStorageService } from '../../services/local-storage.service';
+import { Film } from '../../model/Film';
 @Component({
   selector: 'app-film-info',
   templateUrl: './film-info.component.html',
@@ -11,10 +13,10 @@ import { Location } from '@angular/common';
 })
 export class FilmInfoComponent implements OnInit {
   film_info: FilmInfo;
-  cur_id: string;
+  film_id: string;
 
   btn_state: any = {
-    filmInFavList: false,
+    favorite: false,
     text: 'Add film', //remove film
     icon_name: 'add', //or remove
   };
@@ -23,7 +25,8 @@ export class FilmInfoComponent implements OnInit {
     private filmsService: FilmsService,
     private route: ActivatedRoute,
     private router: Router,
-    private location: Location
+    private location: Location,
+    private localStorageService: LocalStorageService
   ) {
     this.film_info = new FilmInfo();
   }
@@ -32,13 +35,18 @@ export class FilmInfoComponent implements OnInit {
     this.router.routeReuseStrategy.shouldReuseRoute = () => {
       return false;
     };
-    this.cur_id = this.route.snapshot.params['id'];
-    console.log(this.cur_id);
+    this.film_id = this.route.snapshot.params['id'];
+
     this.filmsService
-      .getFilmWithAppendParam(this.cur_id, 'recommendations,similar')
+      .getFilmWithAppendParam(this.film_id, 'recommendations,similar')
       .subscribe((film) => {
         console.log(film);
         this.film_info = new FilmInfo(film);
+
+        this.setBtnState(
+          this.localStorageService.isFavorite(this.film_info.id)
+        );
+
         //get random page of recommendation films for current film
         this.addRandomFilmToStorage(7);
       });
@@ -48,7 +56,7 @@ export class FilmInfoComponent implements OnInit {
     if (times === 0) return;
     this.filmsService
       .getFilmRecs(
-        this.cur_id,
+        this.film_id,
         this.getRandomPage(this.film_info.getRecomsPagesCount())
       )
       .subscribe((obj) => {
@@ -59,13 +67,24 @@ export class FilmInfoComponent implements OnInit {
         this.addRandomFilmToStorage(--times);
       });
   }
+  setBtnState(favorite: boolean) {
+    if (favorite) {
+      this.btn_state.favorite = true;
+      this.btn_state.text = 'Remove film'; //remove film
+      this.btn_state.icon_name = 'remove'; //or remove
+    } else {
+      this.btn_state.favorite = false;
+      this.btn_state.text = 'Add film'; //remove film
+      this.btn_state.icon_name = 'add'; //or remove
+    }
+  }
   changeBtnState() {
-    if (this.btn_state.filmInFavList) {
-      this.btn_state.filmInFavList = false;
+    if (this.btn_state.favorite) {
+      this.btn_state.favorite = false;
       this.btn_state.text = 'Add film'; //remove film
       this.btn_state.icon_name = 'add'; //or remove
     } else {
-      this.btn_state.filmInFavList = true;
+      this.btn_state.favorite = true;
       this.btn_state.text = 'Remove film'; //remove film
       this.btn_state.icon_name = 'remove'; //or remove
     }
@@ -85,20 +104,26 @@ export class FilmInfoComponent implements OnInit {
   getPageForFilm(filmNum: number) {
     return Math.floor(filmNum / 20) + 1;
   }
-  onClick(evt) {
+  addOrRemoveFavorite(evt) {
+    if (this.btn_state.favorite) {
+      //remove
+      this.localStorageService.removeFilm(this.film_info.id);
+    } else {
+      // add
+      this.localStorageService.addFilm(this.film_info.id);
+    }
     this.changeBtnState();
     console.log(evt);
   }
   onRecFilmClick(evt: any, id: number) {
-    evt.preventDefault();
     console.log(evt);
     // alert('asd');
-    this.cur_id = id.toString();
-    this.location.replaceState(`/films/info/${this.cur_id}`);
+    this.film_id = id.toString();
+    this.location.replaceState(`/films/info/${this.film_id}`);
     // "../../info/{{ film?.id }}"
-    // this.cur_id = id.toString();
+    // this.film_id = id.toString();
 
-    this.router.navigateByUrl(`/films/info/${this.cur_id}`);
+    this.router.navigateByUrl(`/films/info/${this.film_id}`);
     // alert('asd');
   }
 }

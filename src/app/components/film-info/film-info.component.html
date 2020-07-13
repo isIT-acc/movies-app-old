@@ -10,7 +10,11 @@
       <div class="film_info_showcase">
         <div class="film_info_first_col">
           <img src="{{ film_info?.img_url }}" alt="poster is absent" />
-          <button (click)="onClick($event)" mat-raised-button color="white">
+          <button
+            (click)="addOrRemoveFavorite($event)"
+            mat-raised-button
+            color="white"
+          >
             {{ btn_state.text }}<mat-icon>{{ btn_state.icon_name }}</mat-icon>
           </button>
         </div>

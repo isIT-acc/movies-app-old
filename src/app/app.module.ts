@@ -16,9 +16,16 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { FavoritesComponent } from './components/favorites/favorites.component';
+import { LocalStorageService } from './services/local-storage.service';
 
 @NgModule({
-  declarations: [AppComponent, MainComponent, FilmInfoComponent, NavbarComponent, FavoritesComponent],
+  declarations: [
+    AppComponent,
+    MainComponent,
+    FilmInfoComponent,
+    NavbarComponent,
+    FavoritesComponent,
+  ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,

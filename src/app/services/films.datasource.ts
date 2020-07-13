@@ -4,13 +4,18 @@ import { Film } from '../model/Film';
 import { FilmsService } from './films.service';
 import { catchError, finalize, map } from 'rxjs/operators';
 
+import { LocalStorageService } from './local-storage.service';
+
 export class FilmsDataSource implements DataSource<Film> {
   private filmsSubject = new BehaviorSubject<Film[]>([]);
   private filmsCountSubject = new BehaviorSubject<number>(1000);
 
   length = this.filmsCountSubject.asObservable();
 
-  constructor(private filmsService: FilmsService) {}
+  constructor(
+    private filmsService: FilmsService,
+    private localStorageService: LocalStorageService
+  ) {}
 
   addGenresToFilmsArr(films: Film[], genres) {
     genres['genres'].forEach((genre) => {
@@ -34,7 +39,13 @@ export class FilmsDataSource implements DataSource<Film> {
       });
     });
   }
-
+  //
+  findAndCheckFavorites(films: Film[]) {
+    films.forEach((film) => {
+      if (this.localStorageService.isFavorite(film.id)) film.favorite = true;
+      else film.favorite = false;
+    });
+  }
   loadFilms(numOfPage: number, firstIndex: number, secondIndex: number) {
     //one page contains 20 films, (secondIndex-firstIndex):number of films to show now
 
@@ -49,6 +60,7 @@ export class FilmsDataSource implements DataSource<Film> {
         // get list of genres
         this.filmsService.getGenres().subscribe((listOfGenres) => {
           this.addGenresToFilmsArr(films_from_server, listOfGenres);
+          this.findAndCheckFavorites(films_from_server);
           this.filmsSubject.next(films_from_server);
         });
       });
@@ -72,6 +84,7 @@ export class FilmsDataSource implements DataSource<Film> {
         // get list of genres
         this.filmsService.getGenres().subscribe((listOfGenres) => {
           this.addGenresToFilmsArr(films_from_server, listOfGenres);
+          this.findAndCheckFavorites(films_from_server);
           this.filmsSubject.next(films_from_server); //we throw this to behavior subject
         });
         this.filmsCountSubject.next(page_of_films['total_results']);
@@ -91,6 +104,7 @@ export class FilmsDataSource implements DataSource<Film> {
       // get list of genres
       this.filmsService.getGenres().subscribe((listOfGenres) => {
         this.addGenresToFilmsArr(films_from_server, listOfGenres);
+        this.findAndCheckFavorites(films_from_server);
         this.filmsSubject.next(films_from_server); //we throw this to behavior subject
         console.log(films_from_server);
       });
@@ -113,6 +127,7 @@ export class FilmsDataSource implements DataSource<Film> {
         // get list of genres
         this.filmsService.getGenres().subscribe((listOfGenres) => {
           this.addGenresToFilmsArr(films_from_server, listOfGenres);
+          this.findAndCheckFavorites(films_from_server);
           this.filmsSubject.next(films_from_server); //we throw this to behavior subject
           console.log(films_from_server);
         });

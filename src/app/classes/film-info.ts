@@ -20,6 +20,7 @@ export class FilmInfo implements FullFilm {
   similars_count: number;
   recoms_pages_count: number;
   similar_pages_count: number;
+  id: number;
 
   bg_img_url: string;
   constructor(jsonObj?: Object) {
@@ -44,6 +45,7 @@ export class FilmInfo implements FullFilm {
       this.similars_count = jsonObj['similar']['total_results'];
       this.recoms_pages_count = jsonObj['recommendations']['total_pages'];
       this.similar_pages_count = jsonObj['similar']['total_pages'];
+      this.id = jsonObj['id'];
 
       this.recommendations = new Array(0);
     } else {
@@ -67,6 +69,7 @@ export class FilmInfo implements FullFilm {
       this.recoms_pages_count = 0;
       this.similar_pages_count = 0;
       this.recommendations = new Array(0);
+      this.id = -1;
     }
   }
 

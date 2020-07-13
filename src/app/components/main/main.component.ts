@@ -3,6 +3,10 @@ import { MatPaginator } from '@angular/material/paginator';
 import { FilmsService } from '../../services/films.service';
 import { FilmsDataSource } from '../../services/films.datasource';
 
+import { LocalStorageService } from '../../services/local-storage.service';
+
+import { Film } from '../../model/Film';
+
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',
@@ -19,15 +23,21 @@ export class MainComponent implements OnInit {
 
   dataSource: FilmsDataSource;
 
-  displayedColumns: string[] = ['title', 'genre_names'];
+  displayedColumns: string[] = ['title', 'genre_names', 'icon'];
 
-  constructor(private filmsService: FilmsService) {}
+  constructor(
+    private filmsService: FilmsService,
+    private localStorageService: LocalStorageService
+  ) {}
 
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
   ngOnInit() {
     // init dataSource by my realisation of DataSource<Film>, mat-table component is subscribing to the connect
-    this.dataSource = new FilmsDataSource(this.filmsService);
+    this.dataSource = new FilmsDataSource(
+      this.filmsService,
+      this.localStorageService
+    );
     this.dataSource.length.subscribe((cur_length) => {
       this.paginatorOptions.length = cur_length;
     });
@@ -74,6 +84,9 @@ export class MainComponent implements OnInit {
     return this.searchString.replace(/\s/g, '+');
   }
   onKey(evt) {
+    if (evt.target.value === '') {
+      this.onCloseSearchButton();
+    }
     //when search first time show first page always
     this.paginator.pageIndex = 0;
     this.dataSource.searchFilmsAndTheirCount(
@@ -90,6 +103,17 @@ export class MainComponent implements OnInit {
       0,
       this.paginatorOptions.pageSize
     );
+  }
+
+  clickOnIcon(film: Film) {
+    console.log(film);
+    if (!film.favorite) {
+      this.localStorageService.addFilm(film.id);
+      film.favorite = true;
+    } else {
+      this.localStorageService.removeFilm(film.id);
+      film.favorite = false;
+    }
   }
 
   // onRowClicked(row) {
