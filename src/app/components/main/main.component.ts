@@ -3,7 +3,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { FilmsService } from '../../services/films.service';
 import { FilmsDataSource } from '../../services/films.datasource';
 import { FavoriteFilmItem } from '../../classes/favorite-film-item';
-
+import { FlashMessagesService } from 'angular2-flash-messages';
 import { LocalStorageService } from '../../services/local-storage.service';
 
 import { Film } from '../../model/Film';
@@ -27,6 +27,7 @@ export class MainComponent implements OnInit {
   displayedColumns: string[] = ['title', 'genre_names', 'favorites'];
 
   constructor(
+    private flashMessageService: FlashMessagesService,
     private filmsService: FilmsService,
     private localStorageService: LocalStorageService
   ) {}
@@ -111,17 +112,23 @@ export class MainComponent implements OnInit {
     if (!film.favorite) {
       this.localStorageService.addFavoriteFilm(new FavoriteFilmItem(film));
       film.favorite = true;
+      this.showAddFlash();
     } else {
       this.localStorageService.removeFavoriteFilm(new FavoriteFilmItem(film));
       film.favorite = false;
+      this.showRemoveFlash();
     }
   }
-
-  // onRowClicked(row) {
-  //   // row contains object(movie)
-  //   console.log(row);
-  // }
-  // handlePage(e: any) {
-  //   console.log(e);
-  // }
+  showAddFlash() {
+    this.flashMessageService.show('Film is added to favorites', {
+      cssClass: 'added',
+      timeout: 2000,
+    });
+  }
+  showRemoveFlash() {
+    this.flashMessageService.show('Film is removed from favorites', {
+      cssClass: 'removed',
+      timeout: 2000,
+    });
+  }
 }

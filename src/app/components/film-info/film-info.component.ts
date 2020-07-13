@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FilmsService } from '../../services/films.service';
 import { ActivatedRoute, Router } from '@angular/Router';
-import { FullFilm } from '../../model/FullFilm';
 import { FilmInfo } from '../../classes/film-info';
 import { Location } from '@angular/common';
 import { LocalStorageService } from '../../services/local-storage.service';
-import { Film } from '../../model/Film';
 import { FavoriteFilmItem } from '../../classes/favorite-film-item';
+import { FlashMessagesService } from 'angular2-flash-messages';
 @Component({
   selector: 'app-film-info',
   templateUrl: './film-info.component.html',
@@ -23,6 +22,7 @@ export class FilmInfoComponent implements OnInit {
   };
 
   constructor(
+    private flashMessageService: FlashMessagesService,
     private filmsService: FilmsService,
     private route: ActivatedRoute,
     private router: Router,
@@ -60,12 +60,12 @@ export class FilmInfoComponent implements OnInit {
     this.filmsService
       .getFilmRecs(
         this.film_id,
-        this.getRandomPage(this.film_info.getRecomsPagesCount())
+        this.getRandomNumOfPage(this.film_info.getRecomsPagesCount())
       )
       .subscribe((obj) => {
         //get random film from recommendations page and set its values to FilmInfo object
         this.film_info.addObjToRecoms(
-          obj['results'][this.getRandomFilmForArr(obj['results'].length)]
+          obj['results'][this.getRandomNumOfFilmForArr(obj['results'].length)]
         );
         this.addRandomFilmToStorage(--times);
       });
@@ -92,45 +92,50 @@ export class FilmInfoComponent implements OnInit {
       this.btn_state.icon_name = 'remove'; //or remove
     }
   }
-  // getRandomFilm from 1 to num of films
-  getRandomFilm(filmsNum: number): number {
+  // getRandomNumOfFilm from 1 to num of films
+  getRandomNumOfFilm(filmsNum: number): number {
     return Math.floor(Math.random() * filmsNum) + 1;
   }
-  // getRandomFilm from 0 to num of films-1(return value is index of Array)
-  getRandomFilmForArr(filmsNum: number): number {
+  // getRandomNumOfFilm from 0 to num of films-1(return value is index of Array)
+  getRandomNumOfFilmForArr(filmsNum: number): number {
     return Math.floor(Math.random() * filmsNum);
   }
   //from 1 to num of pages
-  getRandomPage(pagesNum: number): number {
+  getRandomNumOfPage(pagesNum: number): number {
     return Math.floor(Math.random() * pagesNum) + 1;
   }
-  getPageForFilm(filmNum: number) {
-    return Math.floor(filmNum / 20) + 1;
-  }
-  addOrRemoveFavorite(evt) {
+
+  addOrRemoveFavorite() {
     if (this.btn_state.favorite) {
       //remove
       this.localStorageService.removeFavoriteFilm(
         new FavoriteFilmItem(null, this.film_info)
       );
+      this.showRemoveFlash();
     } else {
       // add
       this.localStorageService.addFavoriteFilm(
         new FavoriteFilmItem(null, this.film_info)
       );
+      this.showAddFlash();
     }
     this.changeBtnState();
-    console.log(evt);
   }
-  onRecFilmClick(evt: any, id: number) {
-    console.log(evt);
-    // alert('asd');
+  onRecFilmClick(id: number) {
     this.film_id = id.toString();
     this.location.replaceState(`/films/info/${this.film_id}`);
-    // "../../info/{{ film?.id }}"
-    // this.film_id = id.toString();
-
     this.router.navigateByUrl(`/films/info/${this.film_id}`);
-    // alert('asd');
+  }
+  showAddFlash() {
+    this.flashMessageService.show('Film is added to favorites', {
+      cssClass: 'added',
+      timeout: 2000,
+    });
+  }
+  showRemoveFlash() {
+    this.flashMessageService.show('Film is removed from favorites', {
+      cssClass: 'removed',
+      timeout: 2000,
+    });
   }
 }

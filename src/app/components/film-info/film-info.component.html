@@ -11,12 +11,13 @@
         <div class="film_info_first_col">
           <img src="{{ film_info?.img_url }}" alt="poster is absent" />
           <button
-            (click)="addOrRemoveFavorite($event)"
+            (click)="addOrRemoveFavorite()"
             mat-raised-button
             color="white"
           >
             {{ btn_state.text }}<mat-icon>{{ btn_state.icon_name }}</mat-icon>
           </button>
+          <flash-messages></flash-messages>
         </div>
         <div class="film_info_sec_col">
           <h2>{{ film_info?.title }}</h2>
@@ -39,10 +40,9 @@
               </span>
               <span class="vote_count">{{ film_info?.vote_count }}</span>
             </div>
-            <!-- <div class="rating_string_container"> -->
+
             <div class="rating_string">
               <span style="width: {{ film_info?.vote_average * 10 }}%;"></span>
-              <!-- </div> -->
             </div>
           </div>
           <div class="production_companies">
@@ -63,7 +63,7 @@
       <div class="film_info_rec_list_cont">
         <div class="rec_film" *ngFor="let film of film_info.recommendations">
           <img src="{{ film?.poster_path }}" alt="" />
-          <button (click)="onRecFilmClick($event, film?.id)">
+          <button (click)="onRecFilmClick(film?.id)">
             {{ film?.title }}
           </button>
         </div>

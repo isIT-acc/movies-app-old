@@ -15,3 +15,16 @@ a {
   text-decoration: none;
   color: black;
 }
+
+.added {
+  background: green;
+  text-align: center;
+  padding: 1rem 0;
+  font-size: 1.5rem;
+}
+.removed {
+  background: red;
+  text-align: center;
+  padding: 1rem 0;
+  font-size: 1.5rem;
+}

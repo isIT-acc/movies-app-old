@@ -17,7 +17,7 @@ import { FormsModule } from '@angular/forms';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { FavoritesComponent } from './components/favorites/favorites.component';
 import { LocalStorageService } from './services/local-storage.service';
-
+import { FlashMessagesModule } from 'angular2-flash-messages';
 @NgModule({
   declarations: [
     AppComponent,
@@ -38,8 +38,9 @@ import { LocalStorageService } from './services/local-storage.service';
     MatButtonModule,
     MatFormFieldModule,
     FormsModule,
+    FlashMessagesModule.forRoot(),
   ],
-  providers: [FilmsService],
+  providers: [FilmsService, LocalStorageService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
