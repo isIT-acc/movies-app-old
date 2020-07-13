@@ -3,6 +3,8 @@ import { RouterModule, Routes } from '@angular/Router';
 
 import { FilmInfoComponent } from './components/film-info/film-info.component';
 import { MainComponent } from './components/main/main.component';
+import { FavoritesComponent } from './components/favorites/favorites.component';
+import { config } from 'process';
 
 const routes: Routes = [
   {
@@ -18,10 +20,14 @@ const routes: Routes = [
     path: 'films/info/:id',
     component: FilmInfoComponent,
   },
+  {
+    path: 'films/favorites',
+    component: FavoritesComponent,
+  },
 ];
 
 @NgModule({
   exports: [RouterModule],
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' })],
 })
 export class AppRoutingModule {}

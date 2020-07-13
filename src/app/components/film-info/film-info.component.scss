@@ -72,6 +72,9 @@
         width: 92px;
         text-align: center;
         margin-right: 1rem;
+        button {
+          @include btnToLink();
+        }
       }
     }
   }

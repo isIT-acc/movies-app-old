@@ -14,9 +14,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
+import { NavbarComponent } from './components/navbar/navbar.component';
+import { FavoritesComponent } from './components/favorites/favorites.component';
 
 @NgModule({
-  declarations: [AppComponent, MainComponent, FilmInfoComponent],
+  declarations: [AppComponent, MainComponent, FilmInfoComponent, NavbarComponent, FavoritesComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,

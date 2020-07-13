@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FilmsService } from '../../services/films.service';
-import { ActivatedRoute } from '@angular/Router';
+import { ActivatedRoute, Router } from '@angular/Router';
 import { FullFilm } from '../../model/FullFilm';
 import { FilmInfo } from '../../classes/film-info';
+import { Location } from '@angular/common';
 @Component({
   selector: 'app-film-info',
   templateUrl: './film-info.component.html',
@@ -20,13 +21,19 @@ export class FilmInfoComponent implements OnInit {
 
   constructor(
     private filmsService: FilmsService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router,
+    private location: Location
   ) {
     this.film_info = new FilmInfo();
   }
 
   ngOnInit(): void {
+    this.router.routeReuseStrategy.shouldReuseRoute = () => {
+      return false;
+    };
     this.cur_id = this.route.snapshot.params['id'];
+    console.log(this.cur_id);
     this.filmsService
       .getFilmWithAppendParam(this.cur_id, 'recommendations,similar')
       .subscribe((film) => {
@@ -81,5 +88,17 @@ export class FilmInfoComponent implements OnInit {
   onClick(evt) {
     this.changeBtnState();
     console.log(evt);
+  }
+  onRecFilmClick(evt: any, id: number) {
+    evt.preventDefault();
+    console.log(evt);
+    // alert('asd');
+    this.cur_id = id.toString();
+    this.location.replaceState(`/films/info/${this.cur_id}`);
+    // "../../info/{{ film?.id }}"
+    // this.cur_id = id.toString();
+
+    this.router.navigateByUrl(`/films/info/${this.cur_id}`);
+    // alert('asd');
   }
 }

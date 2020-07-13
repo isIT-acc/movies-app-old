@@ -3,3 +3,10 @@
   padding: 12px;
   color: #fff;
 }
+
+@mixin btnToLink() {
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}

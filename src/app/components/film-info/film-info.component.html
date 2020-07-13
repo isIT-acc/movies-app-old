@@ -59,9 +59,9 @@
       <div class="film_info_rec_list_cont">
         <div class="rec_film" *ngFor="let film of film_info.recommendations">
           <img src="{{ film?.poster_path }}" alt="" />
-          <p>
+          <button (click)="onRecFilmClick($event, film?.id)">
             {{ film?.title }}
-          </p>
+          </button>
         </div>
       </div>
     </div>
