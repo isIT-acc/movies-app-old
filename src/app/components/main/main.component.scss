@@ -5,3 +5,10 @@
 mat-table {
   width: 100%;
 }
+mat-header-cell:nth-child(3) {
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+
+  // background: black;
+}

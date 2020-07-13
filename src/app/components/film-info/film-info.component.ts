@@ -6,6 +6,7 @@ import { FilmInfo } from '../../classes/film-info';
 import { Location } from '@angular/common';
 import { LocalStorageService } from '../../services/local-storage.service';
 import { Film } from '../../model/Film';
+import { FavoriteFilmItem } from '../../classes/favorite-film-item';
 @Component({
   selector: 'app-film-info',
   templateUrl: './film-info.component.html',
@@ -17,7 +18,7 @@ export class FilmInfoComponent implements OnInit {
 
   btn_state: any = {
     favorite: false,
-    text: 'Add film', //remove film
+    text: 'Add to favorites', //remove film
     icon_name: 'add', //or remove
   };
 
@@ -44,7 +45,9 @@ export class FilmInfoComponent implements OnInit {
         this.film_info = new FilmInfo(film);
 
         this.setBtnState(
-          this.localStorageService.isFavorite(this.film_info.id)
+          this.localStorageService.isFavorite(
+            new FavoriteFilmItem(null, this.film_info)
+          )
         );
 
         //get random page of recommendation films for current film
@@ -70,22 +73,22 @@ export class FilmInfoComponent implements OnInit {
   setBtnState(favorite: boolean) {
     if (favorite) {
       this.btn_state.favorite = true;
-      this.btn_state.text = 'Remove film'; //remove film
+      this.btn_state.text = 'Remove from favorites'; //remove film
       this.btn_state.icon_name = 'remove'; //or remove
     } else {
       this.btn_state.favorite = false;
-      this.btn_state.text = 'Add film'; //remove film
+      this.btn_state.text = 'Add to favorites'; //remove film
       this.btn_state.icon_name = 'add'; //or remove
     }
   }
   changeBtnState() {
     if (this.btn_state.favorite) {
       this.btn_state.favorite = false;
-      this.btn_state.text = 'Add film'; //remove film
+      this.btn_state.text = 'Add to favorites '; //remove film
       this.btn_state.icon_name = 'add'; //or remove
     } else {
       this.btn_state.favorite = true;
-      this.btn_state.text = 'Remove film'; //remove film
+      this.btn_state.text = 'Remove from favorites'; //remove film
       this.btn_state.icon_name = 'remove'; //or remove
     }
   }
@@ -107,10 +110,14 @@ export class FilmInfoComponent implements OnInit {
   addOrRemoveFavorite(evt) {
     if (this.btn_state.favorite) {
       //remove
-      this.localStorageService.removeFilm(this.film_info.id);
+      this.localStorageService.removeFavoriteFilm(
+        new FavoriteFilmItem(null, this.film_info)
+      );
     } else {
       // add
-      this.localStorageService.addFilm(this.film_info.id);
+      this.localStorageService.addFavoriteFilm(
+        new FavoriteFilmItem(null, this.film_info)
+      );
     }
     this.changeBtnState();
     console.log(evt);

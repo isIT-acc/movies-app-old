@@ -1,1 +1,69 @@
-<p>favorites works!</p>
+<div class="container">
+  <!-- <mat-form-field class="example-form-field">
+    <mat-label>Search film</mat-label>
+    <input
+      matInput
+      type="text"
+      [(ngModel)]="searchString"
+      (keyup)="onKey($event)"
+    />
+    <button
+      mat-button
+      *ngIf="searchString"
+      matSuffix
+      mat-icon-button
+      aria-label="Clear"
+      (click)="onCloseSearchButton()"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-form-field> -->
+
+  <mat-table class="films-table mat-elevation-z8" [dataSource]="dataSource">
+    <ng-container matColumnDef="title">
+      <mat-header-cell *matHeaderCellDef>Title</mat-header-cell>
+      <mat-cell *matCellDef="let film"
+        ><a routerLink="../info/{{ film.id }}">{{ film.title }}</a></mat-cell
+      >
+    </ng-container>
+
+    <ng-container matColumnDef="genres_names">
+      <mat-header-cell router *matHeaderCellDef>genres_names</mat-header-cell>
+      <mat-cell class="description-cell" *matCellDef="let film">{{
+        film.genres_names
+      }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="remove">
+      <mat-header-cell router *matHeaderCellDef
+        >remove(x) from<br />
+        favorite films</mat-header-cell
+      >
+      <mat-cell
+        [ngStyle]="{ position: 'relative' }"
+        class="description-cell"
+        *matCellDef="let film"
+      >
+        <mat-icon
+          (click)="clickOnCloseIcon(film)"
+          [ngStyle]="{
+            position: 'absolute',
+            right: 20 + '%',
+            cursor: 'pointer'
+          }"
+          >close</mat-icon
+        >
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+
+    <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+  </mat-table>
+
+  <!-- <mat-paginator
+    [length]="paginatorOptions?.length"
+    [pageSize]="paginatorOptions?.pageSize"
+    [pageSizeOptions]="paginatorOptions?.pageSizeOptions"
+  ></mat-paginator> -->
+</div>

@@ -13,4 +13,5 @@ export interface FullFilm {
   production_companies: Array<string>;
   production_countries: string;
   overview: string;
+  id: number;
 }

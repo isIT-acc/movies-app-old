@@ -34,8 +34,10 @@
       }}</mat-cell>
     </ng-container>
 
-    <ng-container matColumnDef="icon">
-      <mat-header-cell router *matHeaderCellDef></mat-header-cell>
+    <ng-container matColumnDef="favorites">
+      <mat-header-cell router *matHeaderCellDef
+        >add(+)/remove(-)<br />from favorite films</mat-header-cell
+      >
       <mat-cell
         [ngStyle]="{ position: 'relative' }"
         class="description-cell"

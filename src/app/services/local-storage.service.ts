@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Film } from '../model/Film';
+import { FavoriteFilm } from '../model/FavoriteFilm';
 
 @Injectable({
   providedIn: 'root',
@@ -7,30 +7,30 @@ import { Film } from '../model/Film';
 export class LocalStorageService {
   constructor() {
     if (localStorage.getItem('films') === null)
-      localStorage.setItem('films', JSON.stringify(new Array<number>()));
+      localStorage.setItem('films', JSON.stringify(new Array<FavoriteFilm>()));
   }
-  addFilm(filmId: number) {
-    let arr = this.getAllFilms();
-    arr.push(filmId);
+  addFavoriteFilm(film: FavoriteFilm) {
+    let arr = this.getAllFavoriteFilms();
+    arr.push(film);
     localStorage.setItem('films', JSON.stringify(arr));
   }
-  getAllFilms(): Array<number> {
+  getAllFavoriteFilms(): Array<FavoriteFilm> {
     return JSON.parse(localStorage.getItem('films'));
   }
-  removeFilm(filmId: number) {
-    let films = this.getAllFilms();
+  removeFavoriteFilm(film: FavoriteFilm) {
+    let films = this.getAllFavoriteFilms();
     for (let i = 0; i < films.length; i++) {
-      if (films[i] === filmId) {
+      if (films[i].id === film.id) {
         films.splice(i, 1);
         localStorage.setItem('films', JSON.stringify(films));
         return;
       }
     }
   }
-  isFavorite(filmId: number): boolean {
-    let films = this.getAllFilms();
+  isFavorite(film: FavoriteFilm): boolean {
+    let films = this.getAllFavoriteFilms();
     for (let i = 0; i < films.length; i++) {
-      if (films[i] === filmId) {
+      if (films[i].id === film.id) {
         return true;
       }
     }

@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { FilmsService } from '../../services/films.service';
 import { FilmsDataSource } from '../../services/films.datasource';
+import { FavoriteFilmItem } from '../../classes/favorite-film-item';
 
 import { LocalStorageService } from '../../services/local-storage.service';
 
@@ -23,7 +24,7 @@ export class MainComponent implements OnInit {
 
   dataSource: FilmsDataSource;
 
-  displayedColumns: string[] = ['title', 'genre_names', 'icon'];
+  displayedColumns: string[] = ['title', 'genre_names', 'favorites'];
 
   constructor(
     private filmsService: FilmsService,
@@ -108,10 +109,10 @@ export class MainComponent implements OnInit {
   clickOnIcon(film: Film) {
     console.log(film);
     if (!film.favorite) {
-      this.localStorageService.addFilm(film.id);
+      this.localStorageService.addFavoriteFilm(new FavoriteFilmItem(film));
       film.favorite = true;
     } else {
-      this.localStorageService.removeFilm(film.id);
+      this.localStorageService.removeFavoriteFilm(new FavoriteFilmItem(film));
       film.favorite = false;
     }
   }

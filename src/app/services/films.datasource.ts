@@ -6,6 +6,8 @@ import { catchError, finalize, map } from 'rxjs/operators';
 
 import { LocalStorageService } from './local-storage.service';
 
+import { FavoriteFilmItem } from '../classes/favorite-film-item';
+
 export class FilmsDataSource implements DataSource<Film> {
   private filmsSubject = new BehaviorSubject<Film[]>([]);
   private filmsCountSubject = new BehaviorSubject<number>(1000);
@@ -42,7 +44,8 @@ export class FilmsDataSource implements DataSource<Film> {
   //
   findAndCheckFavorites(films: Film[]) {
     films.forEach((film) => {
-      if (this.localStorageService.isFavorite(film.id)) film.favorite = true;
+      if (this.localStorageService.isFavorite(new FavoriteFilmItem(film)))
+        film.favorite = true;
       else film.favorite = false;
     });
   }

@@ -1,0 +1,11 @@
+@import "~src/sass/variables";
+@import "~src/sass/mixins";
+@import "~src/sass/utilities";
+
+mat-header-cell:nth-child(3) {
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+
+  // background: black;
+}
