@@ -1,6 +1,7 @@
 import { FavoriteFilm } from '../model/FavoriteFilm';
 import { Film } from '../model/Film';
 import { FullFilm } from '../model/FullFilm';
+// used by localStorageService to save the information about favorite film in localStorage
 export class FavoriteFilmItem implements FavoriteFilm {
   id: number;
   title: string;

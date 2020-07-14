@@ -3,8 +3,8 @@ import { MatPaginator } from '@angular/material/paginator';
 import { FilmsService } from '../../services/films.service';
 import { FilmsDataSource } from '../../services/films.datasource';
 import { FavoriteFilmItem } from '../../classes/favorite-film-item';
-import { FlashMessagesService } from 'angular2-flash-messages';
 import { LocalStorageService } from '../../services/local-storage.service';
+import { AppFlashMessagesService } from '../../services/app-flash-messages.service';
 
 import { Film } from '../../model/Film';
 
@@ -27,7 +27,7 @@ export class MainComponent implements OnInit {
   displayedColumns: string[] = ['title', 'genre_names', 'favorites'];
 
   constructor(
-    private flashMessageService: FlashMessagesService,
+    private appFlashMessageService: AppFlashMessagesService,
     private filmsService: FilmsService,
     private localStorageService: LocalStorageService
   ) {}
@@ -45,18 +45,22 @@ export class MainComponent implements OnInit {
     });
     this.dataSource.loadFilmsAndTheirCount(1, 0, 20);
   }
-  // down logic work correctly only if pageSize<=20 and pageSize is divider of 20 without rest
+
+  // get number of page to load from server depends on paginator new state
   getNumOfPage(paginatorEvt: any) {
+    // down logic work correctly only if pageSize<=20 and pageSize is divider of 20 without rest
     return (
       Math.trunc((paginatorEvt.pageIndex * paginatorEvt.pageSize) / 20) + 1
     );
   }
-  // down logic work correctly only if pageSize<=20 and pageSize is divider of 20 without rest
+  // get index of first film to show on template depends on paginator new state
   getFirstIndex(paginatorEvt: any) {
+    // down logic work correctly only if pageSize<=20 and pageSize is divider of 20 without rest
     return (paginatorEvt.pageIndex * paginatorEvt.pageSize) % 20;
   }
-  // down logic work correctly only if pageSize<=20 and pageSize is divider of 20 without rest
+  // get index of last film to show on template depends on paginator new state
   getSecondIndex(paginatorEvt: any) {
+    // down logic work correctly only if pageSize<=20 and pageSize is divider of 20 without rest
     return (
       ((paginatorEvt.pageIndex * paginatorEvt.pageSize) % 20) +
       paginatorEvt.pageSize
@@ -64,14 +68,16 @@ export class MainComponent implements OnInit {
   }
   ////
   ngAfterViewInit() {
+    // subscribe to paginator events on template
     this.paginator.page.subscribe((evt) => {
-      //case for stream without search
+      //case for stream without search, we just load one page of popular films from server
       if (this.searchString === '')
         this.dataSource.loadFilms(
           this.getNumOfPage(evt),
           this.getFirstIndex(evt),
           this.getSecondIndex(evt)
         );
+      //case for stream with characters in search field, we load page of searched film by title
       else {
         this.dataSource.searchFilms(
           this.changeSpacesToPluses(),
@@ -82,9 +88,11 @@ export class MainComponent implements OnInit {
       }
     });
   }
+  // we change all spaces to pluses because thi is the query argument styling for searching movie on server
   changeSpacesToPluses(): string {
     return this.searchString.replace(/\s/g, '+');
   }
+  // handler of search film input changes after key up on a keyboard
   onKey(evt) {
     if (evt.target.value === '') {
       this.onCloseSearchButton();
@@ -97,7 +105,7 @@ export class MainComponent implements OnInit {
       this.paginatorOptions.pageSize
     );
   }
-
+  // if close button is pressed, then get popular films from server
   onCloseSearchButton() {
     this.searchString = '';
     this.dataSource.loadFilmsAndTheirCount(
@@ -106,29 +114,16 @@ export class MainComponent implements OnInit {
       this.paginatorOptions.pageSize
     );
   }
-
+  // add or remove favorite film from localstorage
   clickOnIcon(film: Film) {
-    console.log(film);
     if (!film.favorite) {
       this.localStorageService.addFavoriteFilm(new FavoriteFilmItem(film));
       film.favorite = true;
-      this.showAddFlash();
+      this.appFlashMessageService.showAddMessage();
     } else {
       this.localStorageService.removeFavoriteFilm(new FavoriteFilmItem(film));
       film.favorite = false;
-      this.showRemoveFlash();
+      this.appFlashMessageService.showRemoveMessage();
     }
-  }
-  showAddFlash() {
-    this.flashMessageService.show('Film is added to favorites', {
-      cssClass: 'added',
-      timeout: 2000,
-    });
-  }
-  showRemoveFlash() {
-    this.flashMessageService.show('Film is removed from favorites', {
-      cssClass: 'removed',
-      timeout: 2000,
-    });
   }
 }

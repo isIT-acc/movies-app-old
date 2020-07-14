@@ -1,8 +1,19 @@
 mat-table {
   width: 100%;
 }
-mat-header-cell:nth-child(3) {
+mat-form-field.mat-form-field {
+  font-size: 1.5rem;
+}
+mat-header-cell.mat-header-cell {
+  font-size: 1rem;
+}
+mat-label.mat-label {
+  font-size: 1.5rem;
+  line-height: 1.5rem;
+}
+mat-header-cell.mat-header-cell:nth-child(3) {
   flex-direction: column;
   justify-content: center;
   align-items: flex-end;
+  text-align: center;
 }

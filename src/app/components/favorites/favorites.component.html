@@ -1,5 +1,5 @@
 <div class="container">
-  <h1>Favorites</h1>
+  <h1 class="app_header">Favorites</h1>
   <flash-messages></flash-messages>
   <mat-table class="films-table mat-elevation-z8" [dataSource]="dataSource">
     <ng-container matColumnDef="title">
@@ -10,7 +10,7 @@
     </ng-container>
 
     <ng-container matColumnDef="genres_names">
-      <mat-header-cell router *matHeaderCellDef>genres_names</mat-header-cell>
+      <mat-header-cell router *matHeaderCellDef>Genres</mat-header-cell>
       <mat-cell class="description-cell" *matCellDef="let film">{{
         film.genres_names
       }}</mat-cell>
@@ -18,8 +18,7 @@
 
     <ng-container matColumnDef="remove">
       <mat-header-cell router *matHeaderCellDef
-        >remove(x) from<br />
-        favorite films</mat-header-cell
+        >add(+) or remove(-)<br />favorite film</mat-header-cell
       >
       <mat-cell
         [ngStyle]="{ position: 'relative' }"

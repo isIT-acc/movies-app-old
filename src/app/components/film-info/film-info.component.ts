@@ -5,16 +5,17 @@ import { FilmInfo } from '../../classes/film-info';
 import { Location } from '@angular/common';
 import { LocalStorageService } from '../../services/local-storage.service';
 import { FavoriteFilmItem } from '../../classes/favorite-film-item';
-import { FlashMessagesService } from 'angular2-flash-messages';
+import { AppFlashMessagesService } from '../../services/app-flash-messages.service';
 @Component({
   selector: 'app-film-info',
   templateUrl: './film-info.component.html',
   styleUrls: ['./film-info.component.scss'],
 })
+// component of information about film
 export class FilmInfoComponent implements OnInit {
-  film_info: FilmInfo;
-  film_id: string;
-
+  film_info: FilmInfo; //for showing in template
+  film_id: string; // string representation of current film_id
+  // state of button to add or remove film to/from favorites
   btn_state: any = {
     favorite: false,
     text: 'Add to favorites', //remove film
@@ -22,7 +23,7 @@ export class FilmInfoComponent implements OnInit {
   };
 
   constructor(
-    private flashMessageService: FlashMessagesService,
+    private appFlashMessageService: AppFlashMessagesService,
     private filmsService: FilmsService,
     private route: ActivatedRoute,
     private router: Router,
@@ -33,30 +34,32 @@ export class FilmInfoComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // it is used for routing to the same html with other id (to film from recommendations)
     this.router.routeReuseStrategy.shouldReuseRoute = () => {
       return false;
     };
+    // get id from route after init this page to get info from server about this film
     this.film_id = this.route.snapshot.params['id'];
-
+    // get this film info with recommendations and similar info
     this.filmsService
       .getFilmWithAppendParam(this.film_id, 'recommendations,similar')
       .subscribe((film) => {
-        console.log(film);
         this.film_info = new FilmInfo(film);
-
+        // set btn state depends on this film in local storage or not
         this.setBtnState(
           this.localStorageService.isFavorite(
             new FavoriteFilmItem(null, this.film_info)
           )
         );
 
-        //get random page of recommendation films for current film
+        //
         this.addRandomFilmToStorage(7);
       });
   }
-
+  // recursive method
   addRandomFilmToStorage(times: number) {
     if (times === 0) return;
+    // get random number of page from count of recommended films pages
     this.filmsService
       .getFilmRecs(
         this.film_id,
@@ -70,6 +73,7 @@ export class FilmInfoComponent implements OnInit {
         this.addRandomFilmToStorage(--times);
       });
   }
+  // btn has two state add or remove
   setBtnState(favorite: boolean) {
     if (favorite) {
       this.btn_state.favorite = true;
@@ -104,38 +108,28 @@ export class FilmInfoComponent implements OnInit {
   getRandomNumOfPage(pagesNum: number): number {
     return Math.floor(Math.random() * pagesNum) + 1;
   }
-
+  // add or remove film to localstorage and change btn state on screen
   addOrRemoveFavorite() {
     if (this.btn_state.favorite) {
       //remove
       this.localStorageService.removeFavoriteFilm(
         new FavoriteFilmItem(null, this.film_info)
       );
-      this.showRemoveFlash();
+      this.appFlashMessageService.showRemoveMessage();
     } else {
       // add
       this.localStorageService.addFavoriteFilm(
         new FavoriteFilmItem(null, this.film_info)
       );
-      this.showAddFlash();
+      this.appFlashMessageService.showAddMessage();
     }
     this.changeBtnState();
   }
+
+  // go to recommended film
   onRecFilmClick(id: number) {
     this.film_id = id.toString();
     this.location.replaceState(`/films/info/${this.film_id}`);
     this.router.navigateByUrl(`/films/info/${this.film_id}`);
-  }
-  showAddFlash() {
-    this.flashMessageService.show('Film is added to favorites', {
-      cssClass: 'added',
-      timeout: 2000,
-    });
-  }
-  showRemoveFlash() {
-    this.flashMessageService.show('Film is removed from favorites', {
-      cssClass: 'removed',
-      timeout: 2000,
-    });
   }
 }

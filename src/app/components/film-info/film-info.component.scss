@@ -1,11 +1,10 @@
-// @import "~src/sass/variables";
+@import "~src/sass/variables";
 @import "~src/sass/mixins";
-// @import "~src/sass/utilities";
 
 .film_info {
   &_showcase_container {
     position: relative;
-    color: #000;
+    color: $black;
   }
   &_showcase_container:before {
     position: absolute;
@@ -20,17 +19,17 @@
     display: grid;
     grid-template-columns: 1fr 1fr 0.5fr;
     grid-template-rows: auto;
-    column-gap: 1rem;
+    grid-template-areas: "first_col sec_col third_col";
+    column-gap: $gap;
 
-    border-bottom: 2px solid orange;
+    border-bottom: 2px solid $orange;
   }
 
   &_first_col {
-    // justify-self: center;
-
+    grid-area: first_col;
     display: flex;
     flex-direction: column;
-    width: 300px;
+    max-width: 300px;
     img {
       align-self: center;
     }
@@ -41,15 +40,20 @@
     }
   }
   &_sec_col {
+    grid-area: sec_col;
   }
   &_third_col {
+    grid-area: third_col;
+    .production_companies {
+      h3 {
+        line-height: 1rem;
+      }
+    }
     .rating {
       width: 80%;
       display: flex;
       flex-direction: column;
       align-items: flex-start;
-    }
-    .digit_rating {
     }
 
     .ratio {
@@ -57,7 +61,7 @@
       font-size: 1rem;
     }
     .vote_average {
-      color: orange;
+      color: $orange;
     }
     .vote_count {
       font-size: 0.8rem;
@@ -68,7 +72,7 @@
     &_cont {
       display: flex;
       justify-content: flex-start;
-
+      flex-wrap: wrap;
       .rec_film {
         width: 92px;
         text-align: center;
@@ -89,7 +93,63 @@
   span {
     position: absolute;
     height: 100%;
-    background: orange;
+    background: $orange;
     left: 0;
+  }
+}
+
+@media screen and (max-width: $medium_width) {
+  .film_info {
+    &_showcase {
+      grid-template-areas:
+        "first_col sec_col sec_col"
+        "first_col third_col third_col";
+    }
+
+    &_third_col {
+      text-align: center;
+      .rating {
+        width: 50%;
+        margin: auto;
+      }
+      padding-bottom: $gap;
+    }
+    &_sec_col {
+      position: relative;
+      text-align: center;
+      padding-bottom: $gap;
+    }
+    &_sec_col:before {
+      position: absolute;
+      content: "";
+      width: 50%;
+      height: 100%;
+      left: 25%;
+
+      border-bottom: solid 1px $orange;
+    }
+  }
+}
+@media screen and (max-width: $small_width) {
+  .film_info {
+    &_showcase {
+      grid-template-areas:
+        "first_col first_col first_col"
+        "sec_col sec_col sec_col"
+        "third_col third_col third_col";
+    }
+
+    &_first_col {
+      justify-self: center;
+    }
+    &_overview {
+      text-align: center;
+    }
+    &_rec_list {
+      text-align: center;
+      &_cont {
+        justify-content: center;
+      }
+    }
   }
 }

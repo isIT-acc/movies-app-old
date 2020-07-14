@@ -1,5 +1,5 @@
 <div class="container">
-  <mat-form-field class="example-form-field">
+  <mat-form-field class="app_header">
     <mat-label>Search film</mat-label>
     <input
       matInput
@@ -30,7 +30,7 @@
     </ng-container>
 
     <ng-container matColumnDef="genre_names">
-      <mat-header-cell router *matHeaderCellDef>genre_names</mat-header-cell>
+      <mat-header-cell router *matHeaderCellDef>Genres</mat-header-cell>
       <mat-cell class="description-cell" *matCellDef="let film">{{
         film.genre_names
       }}</mat-cell>
@@ -38,7 +38,7 @@
 
     <ng-container matColumnDef="favorites">
       <mat-header-cell router *matHeaderCellDef
-        >add(+)/remove(-)<br />from favorite films</mat-header-cell
+        >add(+) or remove(-)<br />favorite film</mat-header-cell
       >
       <mat-cell
         [ngStyle]="{ position: 'relative' }"

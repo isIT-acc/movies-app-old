@@ -1,5 +1,6 @@
 import { FullFilm } from '../model/FullFilm';
 import { RecFilm } from '../model/RecFilm';
+// use in film-info.component to wrap up the answer from server
 export class FilmInfo implements FullFilm {
   title: string;
   tagline: string;
@@ -120,17 +121,15 @@ export class FilmInfo implements FullFilm {
   }
 
   addObjToRecoms(obj: Object): boolean {
-    // to remove same recoms
-
+    // don't add if film(obj) from Server has the same id as any already recommended
     for (let i = 0; i < this.recommendations.length; i++) {
       if (this.recommendations[i]) {
         if (this.recommendations[i].id === obj['id']) {
-          console.log('inside the if');
-          return true;
+          return false;
         }
       }
     }
-    console.log('outside the if');
+    // create new recommended film with data from object
     let recomFilm: RecFilm = {
       id: obj['id'],
       title: obj['title'],
@@ -138,6 +137,7 @@ export class FilmInfo implements FullFilm {
     };
 
     let l_1 = this.recommendations.length;
+    // push this film to array
     let l_2 = this.recommendations.push(recomFilm);
     if (l_2 > l_1) return true;
     else return false;

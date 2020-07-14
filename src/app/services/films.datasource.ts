@@ -18,17 +18,13 @@ export class FilmsDataSource implements DataSource<Film> {
     private filmsService: FilmsService,
     private localStorageService: LocalStorageService
   ) {}
-
+  // we should change genre ids in answer from server to genres names for each film
   addGenresToFilmsArr(films: Film[], genres) {
     genres['genres'].forEach((genre) => {
       films.forEach((film, j) => {
         if (
           film['genre_ids'].forEach((id, index) => {
             if (id === genre['id']) {
-              // remove id that was changed
-              // film['genre_ids'].splice(index, 1);
-
-              // console.log(id, genre['id'], genre['name']);
               if (film.genre_names) {
                 film.genre_names = film.genre_names + ',' + genre['name'];
               } else {
@@ -41,7 +37,7 @@ export class FilmsDataSource implements DataSource<Film> {
       });
     });
   }
-  //
+  //we have localStorage with favorite films ids and we should add to each film from server favorite flag(true or false) before its showing
   findAndCheckFavorites(films: Film[]) {
     films.forEach((film) => {
       if (this.localStorageService.isFavorite(new FavoriteFilmItem(film)))
@@ -49,9 +45,8 @@ export class FilmsDataSource implements DataSource<Film> {
       else film.favorite = false;
     });
   }
+  //one page contains 20 films, (secondIndex-firstIndex):number of films to show now
   loadFilms(numOfPage: number, firstIndex: number, secondIndex: number) {
-    //one page contains 20 films, (secondIndex-firstIndex):number of films to show now
-
     this.filmsService
       .getPageOfFilms(numOfPage) //make req to api with filmsService
       //server returns Observable with array of films
@@ -68,14 +63,12 @@ export class FilmsDataSource implements DataSource<Film> {
         });
       });
   }
-
+  //one page contains 20 films, (secondIndex-firstIndex):number of films to show now
   loadFilmsAndTheirCount(
     numOfPage: number,
     firstIndex: number,
     secondIndex: number
   ) {
-    //one page contains 20 films, (secondIndex-firstIndex):number of films to show now
-
     this.filmsService
       .getPageOfFilms(numOfPage) //make req to api with filmsService
       //server returns Observable with array of films
@@ -93,7 +86,8 @@ export class FilmsDataSource implements DataSource<Film> {
         this.filmsCountSubject.next(page_of_films['total_results']);
       });
   }
-
+  // title of film is for searching
+  //one page contains 20 films, (secondIndex-firstIndex):number of films to show now
   searchFilmsAndTheirCount(
     title: string,
     firstIndex: number,
@@ -109,11 +103,12 @@ export class FilmsDataSource implements DataSource<Film> {
         this.addGenresToFilmsArr(films_from_server, listOfGenres);
         this.findAndCheckFavorites(films_from_server);
         this.filmsSubject.next(films_from_server); //we throw this to behavior subject
-        console.log(films_from_server);
       });
       this.filmsCountSubject.next(page_of_films['total_results']);
     });
   }
+  // title of film is for searching
+  //one page contains 20 films, (secondIndex-firstIndex):number of films to show now
   searchFilms(
     title: string,
     numOfPage: number,
@@ -132,16 +127,14 @@ export class FilmsDataSource implements DataSource<Film> {
           this.addGenresToFilmsArr(films_from_server, listOfGenres);
           this.findAndCheckFavorites(films_from_server);
           this.filmsSubject.next(films_from_server); //we throw this to behavior subject
-          console.log(films_from_server);
         });
       });
   }
-  // abstract method of DataSource<Film> connect table and data source once
+  // abstract method of DataSource<Film> connect table and datasource (in template) once
   connect(collectionViewer: CollectionViewer): Observable<Film[]> {
-    console.log('Connecting data source');
     return this.filmsSubject.asObservable();
   }
-  //abstract method of DataSource<Film>, disconnect table and data source once
+  //abstract method of DataSource<Film>, disconnect table and datasource (in template) once
   disconnect(collectionViewer: CollectionViewer): void {
     this.filmsSubject.complete();
   }
