@@ -1,5 +1,9 @@
 # TestTaskBacupIt
 
+## Installing the Angular CLI
+With the following command the angular-cli will be installed globally in your machine:
+`npm install -g @angular/cli`
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.8.
 
 ##
