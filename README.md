@@ -11,6 +11,10 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 ## Go to project folder:
 `cd test-task-bacup-it/`
 
+## Install the Angular CLI
+
+`npm install @angular/cli`
+
 ## Install necessary npm modules and run app 
 Run:
 `npm install`
