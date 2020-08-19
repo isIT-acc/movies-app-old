@@ -16,17 +16,22 @@
   &_showcase {
     position: relative;
     z-index: 1;
+    display: -ms-grid;
     display: grid;
+
     grid-template-columns: 1fr 1fr 0.5fr;
     grid-template-rows: auto;
     grid-template-areas: "first_col sec_col third_col";
     column-gap: $gap;
-
+    -ms-grid-rows: auto;
+    -ms-grid-columns: 1fr 1fr 0.5fr;
     border-bottom: 2px solid $orange;
   }
 
   &_first_col {
     grid-area: first_col;
+    -ms-grid-row: 1;
+    -ms-grid-column: 1;
     display: flex;
     flex-direction: column;
     max-width: 300px;
@@ -41,9 +46,13 @@
   }
   &_sec_col {
     grid-area: sec_col;
+    -ms-grid-row: 1;
+    -ms-grid-column: 2;
   }
   &_third_col {
     grid-area: third_col;
+    -ms-grid-row: 1;
+    -ms-grid-column: 3;
     .production_companies {
       h3 {
         line-height: 1rem;
@@ -105,16 +114,15 @@
         "first_col sec_col sec_col"
         "first_col third_col third_col";
     }
-
-    &_third_col {
-      text-align: center;
-      .rating {
-        width: 50%;
-        margin: auto;
-      }
-      padding-bottom: $gap;
+    &_first_col {
+      -ms-grid-row: 1;
+      -ms-grid-column: 1;
+      -ms-grid-row-span: 2;
     }
     &_sec_col {
+      -ms-grid-row: 1;
+      -ms-grid-column: 2;
+      -ms-grid-column-span: 2;
       position: relative;
       text-align: center;
       padding-bottom: $gap;
@@ -128,11 +136,23 @@
 
       border-bottom: solid 1px $orange;
     }
+    &_third_col {
+      -ms-grid-row: 2;
+      -ms-grid-column: 2;
+      -ms-grid-column-span: 2;
+      text-align: center;
+      .rating {
+        width: 50%;
+        margin: auto;
+      }
+      padding-bottom: $gap;
+    }
   }
 }
 @media screen and (max-width: $small_width) {
   .film_info {
     &_showcase {
+      // justify-items: center;
       grid-template-areas:
         "first_col first_col first_col"
         "sec_col sec_col sec_col"
@@ -141,6 +161,27 @@
 
     &_first_col {
       justify-self: center;
+      max-width: 100%;
+      -ms-grid-row: 1;
+      -ms-grid-column: 1;
+      -ms-grid-column-span: 3;
+      -ms-grid-row-span: 1;
+
+      button {
+        width: 300px;
+      }
+    }
+    &_sec_col {
+      justify-self: center;
+      -ms-grid-row: 2;
+      -ms-grid-column: 1;
+      -ms-grid-column-span: 3;
+    }
+    &_third_col {
+      justify-self: center;
+      -ms-grid-row: 3;
+      -ms-grid-column: 1;
+      -ms-grid-column-span: 3;
     }
     &_overview {
       text-align: center;
