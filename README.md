@@ -1,4 +1,4 @@
-# TestTaskBacupIt
+# Movies App
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.8.
 
@@ -6,15 +6,11 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 ## Clone this repo to your local machine:
 
-`git clone https://github.com/isIT-acc/test-task-bacup-it.git`
+`git clone https://github.com/isIT-acc/movies-app.git`
 
 ## Go to project folder:
 
 `cd test-task-bacup-it/`
-
-## Install the Angular CLI
-
-`npm install @angular/cli`
 
 ## Install necessary npm modules and run app
 
