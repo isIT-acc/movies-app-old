@@ -10,7 +10,7 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 ## Go to project folder:
 
-`cd test-task-bacup-it/`
+`cd movies-app/`
 
 ## Install necessary npm modules and run app
 
